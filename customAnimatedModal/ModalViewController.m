@@ -69,11 +69,12 @@ const CGFloat kDeep = 0.80;
 {
   
   UIView *primaryView = self.fromViewController.view; 
+  primaryView.window.backgroundColor = [UIColor blackColor];
   [UIView animateWithDuration:kAnimationDurationZPosition animations:^{
     if (!_overlayView){
       CGRect oFrame = CGRectMake(0, 0, primaryView.frame.size.width,
                                  primaryView.frame.size.height);
-      _overlayView = [[UIView alloc]initWithFrame:oFrame];
+      self.overlayView = [[UIView alloc]initWithFrame:oFrame];
     }
     [self.overlayView setBackgroundColor:[UIColor blackColor]];
     [self.overlayView setAlpha:0.0];
@@ -90,45 +91,20 @@ const CGFloat kDeep = 0.80;
     [self.overlayView setAlpha:0.2];
   } completion:^(BOOL finished) {
     if (finished) {
-      //Keep current context so our zPosition layer will still be there when
-      //dimissing modal
-      //By doing this we lost the modal animation. So let's recode it...
-      self.fromViewController.modalPresentationStyle
-      = UIModalPresentationCurrentContext;
+      //At the same time we are scaling our bottom view for a nice animation
+      [UIView animateWithDuration:kAnimationDurationScaling
+                            delay:0.0
+                          options:UIViewAnimationOptionCurveEaseIn
+                       animations:^{
+                         primaryView.transform = CGAffineTransformMakeScale(kDeep, kDeep);
+                         
+                       } completion:^(BOOL finished) {
+
+                       }];
+      
       [self.fromViewController
-       presentViewController:self animated:NO completion:^{
-         CGRect originalFrame = self.view.frame;
-         //We putting the view at the bottom so when putting the original
-         //frame back we will have the modal like transition
-         self.view.frame = CGRectMake(0,
-                                      primaryView.frame.size.height + 120,
-                                      primaryView.frame.size.width,
-                                      primaryView.frame.size.height);
-         
-         //At the same time we are scaling our old view for a nice animation
-         [UIView animateWithDuration:kAnimationDurationScaling
-                               delay:0.0
-                             options:UIViewAnimationOptionCurveEaseIn
-                          animations:^{
-                            primaryView.transform = CGAffineTransformMakeScale(kDeep, kDeep);
-                            
-                          } completion:^(BOOL finished) {
-                            
-                          }];
-         
-         //Modal like transition animation start
-         [UIView animateWithDuration:kAnimationDurationShowingView
-                               delay:0.15
-                             options:UIViewAnimationOptionCurveEaseOut
-                          animations:^{
-                            // Set the original frame back
-                            self.view.frame = originalFrame;
-                          }
-                          completion:^(BOOL finished) {
-                            //At this point all our animations are complete.
-                            completion();
-                          }];
-         
+       presentViewController:self animated:YES completion:^{
+           completion();
        }];
     }
   }];
@@ -139,26 +115,17 @@ const CGFloat kDeep = 0.80;
 {
   UIView *primaryView = self.fromViewController.view;
 
-  //Dismiss Modal
-  [UIView animateWithDuration:kAnimationDurationShowingView
-                        delay:0.0
-                      options:UIViewAnimationOptionCurveEaseInOut
-                   animations:^{
-                     self.view.frame = CGRectMake(0,
-                                                  primaryView.frame.size.height
-                                                  + 120,
-                                                  self.view.frame.size.width,
-                                                  primaryView.frame.size.height);
-                   }
-                   completion:^(BOOL finished) {
-                     if (finished) {
-                       [self.fromViewController
-                        dismissViewControllerAnimated:NO completion:^{
-                          self.fromViewController.modalPresentationStyle =
-                          UIModalPresentationFullScreen;
-                        }];
-                     }
-                   }];
+  //Dismiss modal
+  [self.fromViewController
+   dismissViewControllerAnimated:YES completion:^{
+     
+   }];
+  
+  //Restore the scale as we lost the context
+  //Without animation
+  //SOOOOOO fake
+  primaryView.transform = CGAffineTransformMakeScale(kDeep, kDeep);
+  
   //Modify Angle
   [UIView animateWithDuration:kAnimationDurationZPosition
                         delay:0.05
@@ -175,7 +142,7 @@ const CGFloat kDeep = 0.80;
                                                            0.0f);
                      [self.overlayView setAlpha:0.0];
                    } completion:^(BOOL finished) {
-                     //restore scaling
+                     //restore scale to 1.0
                      [UIView animateWithDuration:kAnimationDurationScaling animations:^{
                        primaryView.transform = CGAffineTransformMakeScale(1.0, 1.0);
                      } completion:^(BOOL finished) {
