@@ -1,14 +1,14 @@
 //
 //  main.m
-//  customAnimatedModal
+//  gesture
 //
-//  Created by Thomas Ricouard on 4/3/13.
+//  Created by Thomas Ricouard on 4/5/13.
 //  Copyright (c) 2013 Thomas Ricouard. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
-#import "mainController.h"
+#import "AppDelegate.h"
 
 int main(int argc, char *argv[])
 {

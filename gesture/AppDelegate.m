@@ -1,8 +1,8 @@
 //
 //  AppDelegate.m
-//  customAnimatedModal
+//  gesture
 //
-//  Created by Thomas Ricouard on 4/3/13.
+//  Created by Thomas Ricouard on 4/5/13.
 //  Copyright (c) 2013 Thomas Ricouard. All rights reserved.
 //
 
