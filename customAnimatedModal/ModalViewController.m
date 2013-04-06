@@ -80,6 +80,8 @@ const CGFloat kDeep = 0.80;
         [self.overlayView setBackgroundColor:[UIColor blackColor]];
         [self.overlayView setAlpha:0.0];
         CALayer *layer = primaryView.layer;
+        //set a hight negative value to ensure that the animated layer is behind
+        //Everythings so it won't be over the presented modal view.
         layer.zPosition = KZposition;
         CATransform3D rotationAndPerspectiveTransform = CATransform3DIdentity;
         rotationAndPerspectiveTransform.m34 = 1.0 / -300;
@@ -191,6 +193,11 @@ const CGFloat kDeep = 0.80;
     dispatch_after(modalDelay, dispatch_get_main_queue(), animationBlock);
     
     
+}
+
+- (BOOL)shouldAutorotate
+{
+    return NO;
 }
 
 
