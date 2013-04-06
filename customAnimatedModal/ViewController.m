@@ -18,14 +18,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-  UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-  [button setFrame:CGRectMake(self.view.center.x - 150/2, 100, 150, 100)];
-  [button setTitle:@"Present modal" forState:UIControlStateNormal];
-  [button addTarget:self action:@selector(showModal) forControlEvents:UIControlEventTouchUpInside];
-  [self.view addSubview:button];
-  _modalViewController = [[ModalViewController alloc]initWithParentViewController:self
-                                                                 completionTarget:self
-                                                                           action:@selector(dismissModal)];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    [button setFrame:CGRectMake(self.view.center.x - 150/2, 100, 150, 100)];
+    [button setTitle:@"Present modal" forState:UIControlStateNormal];
+    [button addTarget:self action:@selector(showModal) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button];
+    _modalViewController = [[ModalViewController alloc]initWithParentViewController:self
+                                                                   completionTarget:self
+                                                                             action:@selector(dismissModal)];
 	// Do any additional setup after loading the view, typically from a nib.
 }
 
@@ -37,15 +37,15 @@
 
 - (void)showModal
 {
-  [self.modalViewController presentViewControllercompletion:^{
-    
-  }];
+    [self.modalViewController presentViewControllercompletion:^{
+        
+    }];
 }
 
 - (void)dismissModal
 {
-  [self.modalViewController dismissViewControllercompletion:^{
-    
-  }];
+    [self.modalViewController dismissViewControllercompletion:^{
+        
+    }];
 }
 @end

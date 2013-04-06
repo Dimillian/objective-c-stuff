@@ -17,26 +17,26 @@
 static MainController *sharedController = nil;
 
 +(MainController *)sharedController {
-  if (sharedController == nil) {
-    sharedController = [[[self class] alloc] init];
-    [sharedController initializeHierarchy];
-  }
-  return sharedController;
+    if (sharedController == nil) {
+        sharedController = [[[self class] alloc] init];
+        [sharedController initializeHierarchy];
+    }
+    return sharedController;
 }
 
 -(void)initializeHierarchy
 {
-  _firstViewController = [[ViewController alloc]initWithNibName:@"ViewController_iPhone"
-                                                         bundle:nil];
+    _firstViewController = [[ViewController alloc]initWithNibName:@"ViewController_iPhone"
+                                                           bundle:nil];
 }
 
 -(ViewController *)primaryViewController
 {
-  return _firstViewController;
+    return _firstViewController;
 }
 
 -(void)executeCommonCommand:(id)sender
 {
-  NSInteger tag = [sender tag];
+    NSInteger tag = [sender tag];
 }
 @end
