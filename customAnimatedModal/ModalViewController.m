@@ -72,18 +72,16 @@ const CGFloat kDeep = 0.80;
     
     //Modify orientation angle
     void (^modifyAngle) (void) = ^{
-        if (!_overlayView){
-            CGRect oFrame = CGRectMake(0, 0, primaryView.frame.size.width,
-                                       primaryView.frame.size.height);
-            self.overlayView = [[UIView alloc]initWithFrame:oFrame];
-        }
+        CGRect oFrame = CGRectMake(0, 0, primaryView.frame.size.width,
+                                   primaryView.frame.size.height);
+        _overlayView = [[UIView alloc]initWithFrame:oFrame];
         [self.overlayView setBackgroundColor:[UIColor blackColor]];
         [self.overlayView setAlpha:0.0];
+        [self.overlayView setAutoresizingMask:UIViewAutoresizingFlexibleHeight|
+         UIViewAutoresizingFlexibleWidth];
         CALayer *layer = primaryView.layer;
-        //set a hight negative value to ensure that the animated layer is behind
-        //Everythings so it won't be over the presented modal view.
         layer.zPosition = KZposition;
-        CATransform3D rotationAndPerspectiveTransform = CATransform3DIdentity;
+        CATransform3D rotationAndPerspectiveTransform = layer.transform;
         rotationAndPerspectiveTransform.m34 = 1.0 / -300;
         layer.transform = CATransform3DRotate(rotationAndPerspectiveTransform,
                                               2.0f * M_PI / 180.0f,
@@ -96,9 +94,11 @@ const CGFloat kDeep = 0.80;
     
     //Modify view scale
     void (^scaleView) (void) = ^{
-        primaryView.transform = CGAffineTransformMakeScale(kDeep, kDeep);
+        CGAffineTransform xForm = primaryView.transform;
+        primaryView.transform = CGAffineTransformScale(xForm, kDeep, kDeep);
     };
     
+    //Hacky way to test and change the whole bg color, sorry Chrome.
     primaryView.window.backgroundColor = [UIColor blackColor];
     //Begin chained animation
     //The first thing is to modify the angle of the view
@@ -139,26 +139,24 @@ const CGFloat kDeep = 0.80;
     void (^modifyAngle) (void) = ^{
         CALayer *layer = primaryView.layer;
         layer.zPosition = KZposition;
-        CATransform3D rotationAndPerspectiveTransform = CATransform3DIdentity;
+        CATransform3D rotationAndPerspectiveTransform = layer.transform;
         rotationAndPerspectiveTransform.m34 = 1.0 / 300;
         layer.transform = CATransform3DRotate(rotationAndPerspectiveTransform,
                                               -3.0f * M_PI / 180.0f,
                                               1.0f,
                                               0.0f,
                                               0.0f);
-        [self.overlayView setAlpha:0.0];
         
     };
     
     //Modify view scale
     void (^scaleView) (void) = ^{
-        primaryView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+        [self.overlayView setAlpha:0.0];
+        primaryView.transform =  CGAffineTransformScale(primaryView.transform, 1.0, 1.0);
     };
     
     //Modal block
     void (^animationBlock) (void) = ^{
-        
-        
         [UIView animateWithDuration:kAnimationDurationZPosition
                               delay:0.05
                             options:UIViewAnimationOptionCurveEaseIn
@@ -169,7 +167,7 @@ const CGFloat kDeep = 0.80;
                                               animations:scaleView
                                               completion:^(BOOL finished) {
                                                   if (finished)
-                                                      [self.overlayView removeFromSuperview];
+                                                  [self.overlayView removeFromSuperview];
                                                   completion();
                                               }];
                          }];
@@ -185,12 +183,13 @@ const CGFloat kDeep = 0.80;
     //Restore the scale as we lost the context
     //Without animation
     //SOOOOOO fake
-    primaryView.transform = CGAffineTransformMakeScale(kDeep, kDeep);
+    primaryView.transform =  CGAffineTransformScale(primaryView.transform, kDeep, kDeep);
     
     //Slight delay before view animation
     dispatch_time_t modalDelay =
     dispatch_time(DISPATCH_TIME_NOW, 20000000);
     dispatch_after(modalDelay, dispatch_get_main_queue(), animationBlock);
+    
     
     
 }
